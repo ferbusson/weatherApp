@@ -10,14 +10,24 @@ import java.io.IOException;
  */
 public class HttpAsyncTask extends AsyncTask<String,Integer,String>{
 
+
+
+    public static final int METHOD_GET = 0;
+    public static final int METHOD_POST = 1;
+    public static final int METHOD_POST_JSON = 2;
+
+
+    public interface Httpi{
+        void onResponseReceived(String response);
+
+    }
+
+    Httpi httpI;
     int method;
 
-    static final int METHOD_GET = 0;
-    static final int METHOD_POST = 1;
-    static final int METHOD_POST_JSON = 2;
-
-    public HttpAsyncTask(int method){
+    public HttpAsyncTask(int method, Httpi httpI){
         this.method = method;
+        this.httpI = httpI;
 
     }
 
@@ -29,7 +39,7 @@ public class HttpAsyncTask extends AsyncTask<String,Integer,String>{
     try {
         switch (method) {
             case METHOD_GET:
-                rta = con.requestByGet(params[0])
+                rta = con.requestByGet(params[0]);
                 break;
             case METHOD_POST:
                 rta = con.requestByPostForm(params[0],params[1]);
@@ -50,6 +60,6 @@ public class HttpAsyncTask extends AsyncTask<String,Integer,String>{
 
     @Override
     protected void onPostExecute(String s) {
-
+        httpI.onResponseReceived(s);
     }
 }
